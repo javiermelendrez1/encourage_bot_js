@@ -2,10 +2,42 @@ const discord = require('discord.js');
 const fetch = require('node-fetch');
 //the client to work with for the server
 const client = new discord.Client();
+//using repl database 
+const Database = require("@replit/database");
+const db = new Database();
+
 //going to create a array of keywords for the bot to listen for 
 const sadWords = ['sad','depressed','unhappy','angry'];
 //going to add an array of encouraging messages
-const encouragements = ['cheer up', 'hang in there', 'you are a great person/bot'];
+const starterEncouragements = ['cheer up', 'hang in there', 'you are a great person/bot'];
+//get encouragement key from database 
+db.get('encouragements').then(encouragements => {
+  //if no encouragements initalize it with set to the array
+  if(!encouragements || encouragements.length < 1){
+    db.set('encouragements', starterEncouragements);
+  }
+})
+//creating a helper function
+//this adds encouragements messages 
+const updateEncouragements = (encourageMessage) => {
+  //get list of current messages
+  db.get('encouragements').then(encouragements => {
+    //once we get the data push onto the array the new message
+    encouragements.push([encourageMessage]);
+    db.set('encouragements', encouragements);
+  })
+}
+//create a function to delete messages
+const deleteEncouragements = (encourageMessages) => {
+  db.get('encouragements').then(encouragements => {
+    //check that the array not empty 
+    if(encouragements.length > index){
+      //call splice method to remove the item at this index
+      encouragements.splice(index, 1); 
+      db.set('encouragements', encouragements); //update array
+    }
+  })
+} 
 
 const getQuote = () => {
   //async fetch call to get the api 
@@ -54,7 +86,8 @@ client.on('message', (msg) => {
   //true will be returned or false
   if(sadWords.some(word => msg.content.includes(word))){
     //if true get a random encouragement word and reply with it
-    const encourage = encouragements[Math.floor(Math.random() * encouragements.length)];
+    const encourage = starterEncouragements[Math.floor(Math.random() * starterEncouragements.length)];
+    //reply to the use
     msg.reply(encourage);
   }
 });
