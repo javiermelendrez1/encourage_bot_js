@@ -16,3 +16,7 @@ client.on('message', (msg) => {
     //thew bot will reply with another message when listening for the that specific message
   }
 });
+
+const mySecret = process.env['TOKEN']
+//use bot token from .env to login to server 
+client.login(process.env.TOKEN);
