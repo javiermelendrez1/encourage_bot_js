@@ -1,8 +1,11 @@
 const discord = require('discord.js');
 const fetch = require('node-fetch');
-const client = new discord.Client();
 //the client to work with for the server
-
+const client = new discord.Client();
+//going to create a array of keywords for the bot to listen for 
+const sadWords = ['sad','depressed','unhappy','angry'];
+//going to add an array of encouraging messages
+const encouragements = ['cheer up', 'hang in there', 'you are a great person/bot'];
 
 const getQuote = () => {
   //async fetch call to get the api 
@@ -43,6 +46,16 @@ client.on('message', (msg) => {
   if(msg.content === 'ping'){
     msg.reply('pong');
     //thew bot will reply with another message when listening for the that specific message
+  }
+
+  //check if the message contains a word in the sad array 
+  //going to use the array some method
+  //this method checks if on element passes the test in the function
+  //true will be returned or false
+  if(sadWords.some(word => msg.content.includes(word))){
+    //if true get a random encouragement word and reply with it
+    const encourage = encouragements[Math.floor(Math.random() * encouragements.length)];
+    msg.reply(encourage);
   }
 });
 
