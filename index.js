@@ -1,8 +1,7 @@
-
 const discord = require('discord.js');
+const fetch = require('node-fetch');
 const client = new discord.Client();
 //the client to work with for the server
-const fetch = require('node-fetch');
 
 
 const getQuote = () => {
@@ -26,6 +25,20 @@ client.on('ready', () => {
 
 //going to listen for a message now
 client.on('message', (msg) => {
+
+  //check to see if the message is from the bot
+  if(msg.author.bot) return; //dont want anything from the bot
+
+  if(msg.content === '$inspire'){
+    //if the message says inspire call the getQuote function
+    getQuote().then(
+      quote => {
+        msg.channel.send(quote);
+      }
+    )
+  }
+
+
   //check to see what the message is
   if(msg.content === 'ping'){
     msg.reply('pong');
