@@ -28,7 +28,7 @@ const updateEncouragements = (encourageMessage) => {
   })
 }
 //create a function to delete messages
-const deleteEncouragements = (encourageMessages) => {
+const deleteEncouragements = (index) => {
   db.get('encouragements').then(encouragements => {
     //check that the array not empty 
     if(encouragements.length > index){
@@ -85,12 +85,27 @@ client.on('message', (msg) => {
   //this method checks if on element passes the test in the function
   //true will be returned or false
   if(sadWords.some(word => msg.content.includes(word))){
+    //get the messages from the database
+    db.get('encouragements').then(encouragements => {
     //if true get a random encouragement word and reply with it
     const encourage = starterEncouragements[Math.floor(Math.random() * starterEncouragements.length)];
     //reply to the use
-    msg.reply(encourage);
+    msg.reply(encourage);      
+    })
+
+  }
+  //listen to new commands
+  if (msg.content.startsWith("$new")) {
+    encourageMessage = msg.content.split("$new ")[1];
+    updateEncouragements(encourageMessage);
+    msg.channel.send("New encouraging message added.");
+  }
+//listen to delete command
+  if (msg.content.startsWith("$del")) {
+    index = parseInt(msg.content.split("$del ")[1]);
+    deleteEncouragements(index);
+    msg.channel.send("Encouraging message deleted.");
   }
 });
-
 //use bot token from .env to login to server 
 client.login(process.env.TOKEN);
